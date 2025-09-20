@@ -1,0 +1,215 @@
+/* Global styles */
+:root {
+    --primary-color: #2d5a27;
+    --secondary-color: #507d4c;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --light-bg: #f1f8e9;
+    --dark-bg: #1b5e20;
+}
+
+/* Map Page Styles */
+#map {
+    width: 100%;
+    height: 600px;
+    border-radius: 8px;
+}
+
+.stats-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.legend-box {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 8px;
+    border: 1px solid #ddd;
+}
+
+.filter-section {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-section label {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.filter-section select {
+    border-color: #ddd;
+}
+
+.filter-section select:focus {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+}
+
+.results-table th {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+}
+
+.map-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(45, 90, 39, 0.9), rgba(45, 90, 39, 0.9)), url('/img/agriculture-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 3rem 0;
+}
+
+.hero-stats {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+/* Cards and Sections */
+.card, .section {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    background: white;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header, .section-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+}
+
+/* Maps */
+.map-container {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Badges and Labels */
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+.badge-success {
+    background-color: var(--success-color);
+}
+
+.badge-warning {
+    background-color: var(--warning-color);
+}
+
+.badge-danger {
+    background-color: var(--danger-color);
+}
+
+/* Tables */
+.table th {
+    background-color: var(--light-bg);
+}
+
+/* Footer */
+.footer {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card, .section {
+        margin-bottom: 15px;
+    }
+}
+
+/* Utilities */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.border-primary {
+    border-color: var(--primary-color) !important;
+}
