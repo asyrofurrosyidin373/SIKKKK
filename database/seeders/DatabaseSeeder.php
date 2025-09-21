@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
             OrgPenTanSeeder::class,
             HamaPenyakitSeeder::class,
             PenyakitSeeder::class,
-            GejalaSeeder::class,
+            OptimizedGejalaSeeder::class,
+            OptimizedHamaPenyakitGejalaSeeder::class,
             InsektisidaSeeder::class,
             PengendalianSeeder::class,
 

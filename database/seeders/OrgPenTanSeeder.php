@@ -48,6 +48,14 @@ class OrgPenTanSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => Str::uuid(),
+                'nama_opt' => 'Balitkabi',
+                'jenis' => 'Organisasi',
+                'gambar' => 'placeholder_image_url_balitkabi.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
             // Anda bisa menambahkan data OPT lainnya di sini
         ];
 

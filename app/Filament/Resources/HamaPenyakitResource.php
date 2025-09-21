@@ -13,7 +13,12 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RangeSlider;
 
 class HamaPenyakitResource extends Resource
 {
@@ -62,6 +67,19 @@ class HamaPenyakitResource extends Resource
                             ->default('Kedelai')
                             ->required()
                             ->maxLength(255),
+                        
+                        Toggle::make('is_active')
+                            ->label('Aktif')
+                            ->default(true)
+                            ->helperText('Nonaktifkan untuk menyembunyikan dari sistem deteksi'),
+                        
+                        TextInput::make('priority')
+                            ->label('Prioritas')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(10)
+                            ->default(5)
+                            ->helperText('1 = Rendah, 10 = Sangat Tinggi'),
                     ])
                     ->columns(2),
 
@@ -160,6 +178,22 @@ class HamaPenyakitResource extends Resource
                     ->badge()
                     ->color('success'),
                 
+                Tables\Columns\TextColumn::make('priority')
+                    ->label('Prioritas')
+                    ->badge()
+                    ->color(fn ($state) => match(true) {
+                        $state >= 8 => 'danger',
+                        $state >= 6 => 'warning',
+                        $state >= 4 => 'info',
+                        default => 'success'
+                    })
+                    ->sortable(),
+                
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktif')
+                    ->boolean()
+                    ->sortable(),
+                
                 Tables\Columns\TextColumn::make('gejala_count')
                     ->label('Gejala')
                     ->counts('gejala')
@@ -189,7 +223,40 @@ class HamaPenyakitResource extends Resource
                     ->label('Tanaman')
                     ->options([
                         'Kedelai' => 'Kedelai',
+                        'Kacang Tanah' => 'Kacang Tanah',
+                        'Kacang Hijau' => 'Kacang Hijau',
                     ]),
+                
+                TernaryFilter::make('is_active')
+                    ->label('Status Aktif')
+                    ->placeholder('Semua')
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Tidak Aktif'),
+                
+                Filter::make('priority_range')
+                    ->form([
+                        RangeSlider::make('priority')
+                            ->label('Rentang Prioritas')
+                            ->min(1)
+                            ->max(10)
+                            ->step(1)
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['priority'],
+                                fn (Builder $query, $priority): Builder => $query->whereBetween('priority', $priority),
+                            );
+                    }),
+                
+                Filter::make('has_control_methods')
+                    ->label('Memiliki Metode Pengendalian')
+                    ->query(fn (Builder $query): Builder => $query->where(function($q) {
+                        $q->whereNotNull('kultur_teknis')
+                          ->orWhereNotNull('fisik_mekanis')
+                          ->orWhereNotNull('hayati')
+                          ->orWhereNotNull('kimiawi');
+                    })),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -201,7 +268,8 @@ class HamaPenyakitResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('priority', 'desc')
+            ->poll('30s'); // Auto-refresh every 30 seconds
     }
 
     public static function getPages(): array

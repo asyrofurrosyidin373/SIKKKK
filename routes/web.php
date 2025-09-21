@@ -38,12 +38,18 @@ Route::prefix('varietas')->name('varietas.')->group(function () {
     Route::get('/{type}/{id}', [VarietasController::class, 'show'])->name('show');
     Route::get('/varietas/kedelai/{varietas}/detail', [VarietasController::class, 'showKedelaiDetail'])
         ->name('varietas.kedelai.detail');
+    
+    // API routes for varietas
+    Route::get('/api/recommendations', [VarietasController::class, 'getRecommendations'])->name('api.recommendations');
+    Route::post('/api/compare', [VarietasController::class, 'compare'])->name('api.compare');
 });
 
 // OPT Routes
 Route::prefix('opt')->name('opt.')->group(function () {
     Route::get('/', [OptController::class, 'index'])->name('index');
     Route::get('/{id}', [OptController::class, 'show'])->name('show');
+    Route::get('/api/data', [OptController::class, 'getOptData'])->name('api.data');
+    Route::get('/api/search', [OptController::class, 'search'])->name('api.search');
 });
 
 // Hama & Penyakit Routes

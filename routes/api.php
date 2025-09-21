@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\VarietasController;
 use App\Http\Controllers\Api\OptController;
 use App\Http\Controllers\Api\DeteksiController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,7 @@ Route::prefix('regions')->group(function () {
     Route::get('/kabupaten/{id}/kecamatan', [RegionController::class, 'getKecamatanByKabupaten']);
     Route::get('/kecamatan/{id}', [RegionController::class, 'getKecamatanDetail']);
     Route::get('/kecamatan-map', [RegionController::class, 'getAllKecamatanForMap']);
+    Route::get('/stats', [RegionController::class, 'getRegionStats']);
 });
 
 // Varietas Routes
@@ -40,9 +42,12 @@ Route::prefix('varietas')->group(function () {
 // OPT (Organisme Pengganggu Tanaman) Routes
 Route::prefix('opt')->group(function () {
     Route::get('/', [OptController::class, 'getAllOpt']);
+    Route::get('/search', [OptController::class, 'search']);
+    Route::get('/stats', [OptController::class, 'getStats']);
     Route::get('/{id}', [OptController::class, 'getOptDetail']);
     Route::get('/{id}/gejala', [OptController::class, 'getGejalaByOpt']);
     Route::get('/{id}/pengendalian', [OptController::class, 'getPengendalianByOpt']);
+    Route::get('/{id}/related', [OptController::class, 'getRelatedOpts']);
 });
 
 // Detection Routes
@@ -52,6 +57,14 @@ Route::prefix('deteksi')->group(function () {
     Route::get('/tanaman', [DeteksiController::class, 'getTanaman']);
     Route::post('/laporan', [DeteksiController::class, 'submitLaporan']);
     Route::post('/ai', [DeteksiController::class, 'detectWithAI']); // AI detection endpoint
+    Route::get('/stats', [DeteksiController::class, 'getDetectionStats']);
+    Route::get('/history', [DeteksiController::class, 'getDetectionHistory']);
+});
+
+// Dashboard Routes
+Route::prefix('dashboard')->group(function () {
+    Route::get('/stats', [DashboardController::class, 'getStats']);
+    Route::get('/charts', [DashboardController::class, 'getChartData']);
 });
 
 // Search Routes
@@ -62,6 +75,6 @@ Route::get('/health', function () {
     return response()->json([
         'status' => 'OK',
         'timestamp' => now(),
-        'version' => '1.0.0'
+        'version' => '2.0.0'
     ]);
 });

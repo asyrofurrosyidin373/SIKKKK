@@ -261,8 +261,8 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'ZipStream\\' => 
         array (
@@ -690,10 +690,10 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         ),
         'Filament\\' => 
         array (
-            0 => __DIR__ . '/..' . '/filament/spatie-laravel-tags-plugin/src',
-            1 => __DIR__ . '/..' . '/filament/spatie-laravel-settings-plugin/src',
-            2 => __DIR__ . '/..' . '/filament/spatie-laravel-media-library-plugin/src',
-            3 => __DIR__ . '/..' . '/filament/filament/src',
+            0 => __DIR__ . '/..' . '/filament/filament/src',
+            1 => __DIR__ . '/..' . '/filament/spatie-laravel-media-library-plugin/src',
+            2 => __DIR__ . '/..' . '/filament/spatie-laravel-settings-plugin/src',
+            3 => __DIR__ . '/..' . '/filament/spatie-laravel-tags-plugin/src',
         ),
         'Faker\\' => 
         array (
@@ -894,6 +894,7 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'App\\Filament\\Resources\\VarietasKedelaiResource\\Pages\\CreateVarietasKedelai' => __DIR__ . '/../..' . '/app/Filament/Resources/VarietasKedelaiResource/Pages/CreateVarietasKedelai.php',
         'App\\Filament\\Resources\\VarietasKedelaiResource\\Pages\\EditVarietasKedelai' => __DIR__ . '/../..' . '/app/Filament/Resources/VarietasKedelaiResource/Pages/EditVarietasKedelai.php',
         'App\\Filament\\Resources\\VarietasKedelaiResource\\Pages\\ListVarietasKedelais' => __DIR__ . '/../..' . '/app/Filament/Resources/VarietasKedelaiResource/Pages/ListVarietasKedelais.php',
+        'App\\Http\\Controllers\\Api\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/DashboardController.php',
         'App\\Http\\Controllers\\Api\\DeteksiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/DeteksiController.php',
         'App\\Http\\Controllers\\Api\\OptController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/OptController.php',
         'App\\Http\\Controllers\\Api\\RegionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/RegionController.php',
@@ -906,6 +907,7 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'App\\Http\\Controllers\\HamaPenyakitController' => __DIR__ . '/../..' . '/app/Http/Controllers/HamaPenyakitController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\OptController' => __DIR__ . '/../..' . '/app/Http/Controllers/OptController.php',
+        'App\\Http\\Controllers\\PengendalianController' => __DIR__ . '/../..' . '/app/Http/Controllers/PengendalianController.php',
         'App\\Http\\Controllers\\RegionController' => __DIR__ . '/../..' . '/app/Http/Controllers/RegionController.php',
         'App\\Http\\Controllers\\VarietasController' => __DIR__ . '/../..' . '/app/Http/Controllers/VarietasController.php',
         'App\\Http\\Middleware\\Api\\CorsMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/Api/CorsMiddleware.php',
@@ -937,6 +939,7 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\Filament\\AdminPanelProvider' => __DIR__ . '/../..' . '/app/Providers/Filament/AdminPanelProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\Services\\DetectionService' => __DIR__ . '/../..' . '/app/Services/DetectionService.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'BladeUI\\Heroicons\\BladeHeroiconsServiceProvider' => __DIR__ . '/..' . '/blade-ui-kit/blade-heroicons/src/BladeHeroiconsServiceProvider.php',
         'BladeUI\\Icons\\BladeIconsServiceProvider' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/BladeIconsServiceProvider.php',
@@ -1127,6 +1130,8 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'Database\\Seeders\\KomKedelaiSeeder' => __DIR__ . '/../..' . '/database/seeders/KomKedelaiSeeder.php',
         'Database\\Seeders\\LaporanDeteksiSeeder' => __DIR__ . '/../..' . '/database/seeders/LaporanDeteksiSeeder.php',
         'Database\\Seeders\\OptVarietasPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/OptVarietasPivotSeeder.php',
+        'Database\\Seeders\\OptimizedGejalaSeeder' => __DIR__ . '/../..' . '/database/seeders/OptimizedGejalaSeeder.php',
+        'Database\\Seeders\\OptimizedHamaPenyakitGejalaSeeder' => __DIR__ . '/../..' . '/database/seeders/OptimizedHamaPenyakitGejalaSeeder.php',
         'Database\\Seeders\\OrgPenTanSeeder' => __DIR__ . '/../..' . '/database/seeders/OrgPenTanSeeder.php',
         'Database\\Seeders\\PengendalianInsektisidaPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/PengendalianInsektisidaPivotSeeder.php',
         'Database\\Seeders\\PengendalianSeeder' => __DIR__ . '/../..' . '/database/seeders/PengendalianSeeder.php',

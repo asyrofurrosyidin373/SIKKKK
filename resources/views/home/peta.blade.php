@@ -115,6 +115,7 @@
             // Event listeners
             $('#provinsiSelect').change(loadKabupaten);
             $('#kabupatenSelect').change(loadKecamatan);
+            $('#kecamatanSelect').change(loadMapData);
             $('#applyFilter').click(loadMapData);
             $('#resetFilter').click(resetFilters);
         });
@@ -131,7 +132,7 @@
                 return;
             }
 
-            $.get(`/api/regions/provinsi/${provinsiId}/kabupaten`)
+            $.get(`/kabupaten/${provinsiId}`)
                 .done(function(data) {
                     let options = '<option value="">Semua Kabupaten</option>';
                     data.forEach(function(kabupaten) {
@@ -160,7 +161,7 @@
                 return;
             }
 
-            $.get(`/api/regions/kabupaten/${kabupatenId}/kecamatan`)
+            $.get(`/kecamatan/${kabupatenId}`)
                 .done(function(data) {
                     let options = '<option value="">Semua Kecamatan</option>';
                     data.forEach(function(kecamatan) {
@@ -187,17 +188,24 @@
             };
 
             $.get('/peta/data', formData)
-                .done(function(data) {
-                    data.forEach(function(kecamatan) {
-                        if (kecamatan.latitude && kecamatan.longitude) {
-                            addMarkerToMap(kecamatan);
-                        }
-                    });
+                .done(function(response) {
+                    if (response.success && response.data) {
+                        response.data.forEach(function(kecamatan) {
+                            if (kecamatan.latitude && kecamatan.longitude) {
+                                addMarkerToMap(kecamatan);
+                            }
+                        });
 
-                    if (data.length > 0) {
-                        // Fit map to markers
-                        const group = new L.featureGroup(markers);
-                        map.fitBounds(group.getBounds().pad(0.1));
+                        if (response.data.length > 0) {
+                            // Fit map to markers
+                            const group = new L.featureGroup(markers);
+                            map.fitBounds(group.getBounds().pad(0.1));
+                        }
+                        
+                        // Update info panel with metadata
+                        updateInfoPanel(response.metadata);
+                    } else {
+                        alert('Error: ' + (response.message || 'Unknown error'));
                     }
                 })
                 .fail(function() {
@@ -304,6 +312,24 @@
                 .fail(function() {
                     alert('Error loading kecamatan detail');
                 });
+        }
+
+        function updateInfoPanel(metadata) {
+            if (metadata) {
+                const infoHtml = `
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Total Kecamatan</small>
+                            <div class="fw-bold">${metadata.total}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Dengan Koordinat</small>
+                            <div class="fw-bold">${metadata.with_coordinates}</div>
+                        </div>
+                    </div>
+                `;
+                $('#infoPanelBody').html(infoHtml);
+            }
         }
 
         function resetFilters() {

@@ -9,7 +9,12 @@ class HamaPenyakitSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('hama_penyakits')->insert([
+        // Clear existing data (handle foreign key constraints)
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('hama_penyakits')->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
+        $hamaPenyakitData = [
             [
                 'id_penyakit' => 'PH001',
                 'nama_penyakit' => 'Lalat Bibit Kacang (Ophiomyia Phaseoli)',
@@ -262,7 +267,107 @@ class HamaPenyakitSeeder extends Seeder
                 'hayati' => null,
                 'kimiawi' => null,
                 'deskripsi' => 'Daun mosaik hijau-kuning',
+                'is_active' => true,
+                'priority' => 8,
+                'metadata' => json_encode([
+                    'severity_level' => 'high',
+                    'common_season' => 'musim_hujan',
+                    'affected_stages' => ['vegetative', 'reproductive']
+                ])
             ],
+        ];
+
+        // Add optimized fields to all records
+        foreach ($hamaPenyakitData as &$record) {
+            $record['is_active'] = true;
+            $record['priority'] = $this->calculatePriority($record);
+            $record['metadata'] = json_encode($this->generateMetadata($record));
+            $record['created_at'] = now();
+            $record['updated_at'] = now();
+        }
+
+        // Insert in batches for better performance
+        $chunks = array_chunk($hamaPenyakitData, 100);
+        foreach ($chunks as $chunk) {
+            DB::table('hama_penyakits')->insert($chunk);
+        }
+    }
+
+    /**
+     * Calculate priority based on disease characteristics
+     */
+    private function calculatePriority($record): int
+    {
+        $priority = 5; // Base priority
+        
+        // Increase priority for diseases with chemical control
+        if (!empty($record['kimiawi'])) {
+            $priority += 2;
+        }
+        
+        // Increase priority for diseases with biological control
+        if (!empty($record['hayati'])) {
+            $priority += 1;
+        }
+        
+        // Increase priority for diseases affecting multiple plant parts
+        $controlMethods = array_filter([
+            $record['kultur_teknis'],
+            $record['fisik_mekanis'],
+            $record['hayati'],
+            $record['kimiawi']
         ]);
+        
+        $priority += count($controlMethods);
+        
+        return min(10, max(1, $priority));
+    }
+
+    /**
+     * Generate metadata for the disease
+     */
+    private function generateMetadata($record): array
+    {
+        $metadata = [
+            'control_methods_count' => count(array_filter([
+                $record['kultur_teknis'],
+                $record['fisik_mekanis'],
+                $record['hayati'],
+                $record['kimiawi']
+            ])),
+            'has_chemical_control' => !empty($record['kimiawi']),
+            'has_biological_control' => !empty($record['hayati']),
+            'has_cultural_control' => !empty($record['kultur_teknis']),
+            'has_physical_control' => !empty($record['fisik_mekanis']),
+        ];
+
+        // Add severity level based on description
+        $description = strtolower($record['deskripsi'] ?? '');
+        if (str_contains($description, 'parah') || str_contains($description, 'habis') || str_contains($description, 'rusak')) {
+            $metadata['severity_level'] = 'high';
+        } elseif (str_contains($description, 'sedang') || str_contains($description, 'menguning')) {
+            $metadata['severity_level'] = 'medium';
+        } else {
+            $metadata['severity_level'] = 'low';
+        }
+
+        // Add affected plant parts
+        $affectedParts = [];
+        if (str_contains($description, 'daun')) {
+            $affectedParts[] = 'leaf';
+        }
+        if (str_contains($description, 'batang')) {
+            $affectedParts[] = 'stem';
+        }
+        if (str_contains($description, 'polong') || str_contains($description, 'biji')) {
+            $affectedParts[] = 'pod';
+        }
+        if (str_contains($description, 'akar')) {
+            $affectedParts[] = 'root';
+        }
+        
+        $metadata['affected_parts'] = $affectedParts;
+
+        return $metadata;
     }
 }

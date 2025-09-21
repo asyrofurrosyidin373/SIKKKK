@@ -11,7 +11,13 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RangeSlider;
+use Illuminate\Database\Eloquent\Builder;
 
 class GejalaResource extends Resource
 {
@@ -57,6 +63,28 @@ class GejalaResource extends Resource
                             ->required()
                             ->rows(4)
                             ->columnSpanFull(),
+                        
+                        Toggle::make('is_active')
+                            ->label('Aktif')
+                            ->default(true)
+                            ->helperText('Nonaktifkan untuk menyembunyikan dari sistem deteksi'),
+                        
+                        TextInput::make('frequency')
+                            ->label('Frekuensi (%)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->default(50)
+                            ->helperText('Seberapa sering gejala ini muncul'),
+                        
+                        TextInput::make('severity_score')
+                            ->label('Tingkat Keparahan (1-10)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(10)
+                            ->step(0.1)
+                            ->default(5)
+                            ->helperText('1 = Ringan, 10 = Sangat Parah'),
                     ])
                     ->columns(2),
 
@@ -109,6 +137,34 @@ class GejalaResource extends Resource
                     ->badge()
                     ->color('success'),
                 
+                Tables\Columns\TextColumn::make('frequency')
+                    ->label('Frekuensi')
+                    ->badge()
+                    ->color(fn ($state) => match(true) {
+                        $state >= 80 => 'success',
+                        $state >= 60 => 'info',
+                        $state >= 40 => 'warning',
+                        default => 'danger'
+                    })
+                    ->suffix('%')
+                    ->sortable(),
+                
+                Tables\Columns\TextColumn::make('severity_score')
+                    ->label('Keparahan')
+                    ->badge()
+                    ->color(fn ($state) => match(true) {
+                        $state >= 8 => 'danger',
+                        $state >= 6 => 'warning',
+                        $state >= 4 => 'info',
+                        default => 'success'
+                    })
+                    ->sortable(),
+                
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktif')
+                    ->boolean()
+                    ->sortable(),
+                
                 Tables\Columns\TextColumn::make('hama_penyakit_count')
                     ->label('Terkait')
                     ->counts('hamaPenyakit')
@@ -134,7 +190,47 @@ class GejalaResource extends Resource
                     ->label('Jenis Tanaman')
                     ->options([
                         'Kedelai' => 'Kedelai',
+                        'Kacang Tanah' => 'Kacang Tanah',
+                        'Kacang Hijau' => 'Kacang Hijau',
                     ]),
+                
+                TernaryFilter::make('is_active')
+                    ->label('Status Aktif')
+                    ->placeholder('Semua')
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Tidak Aktif'),
+                
+                Filter::make('severity_range')
+                    ->form([
+                        RangeSlider::make('severity_score')
+                            ->label('Rentang Keparahan')
+                            ->min(1)
+                            ->max(10)
+                            ->step(0.1)
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['severity_score'],
+                                fn (Builder $query, $severity): Builder => $query->whereBetween('severity_score', $severity),
+                            );
+                    }),
+                
+                Filter::make('frequency_range')
+                    ->form([
+                        RangeSlider::make('frequency')
+                            ->label('Rentang Frekuensi')
+                            ->min(0)
+                            ->max(100)
+                            ->step(5)
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['frequency'],
+                                fn (Builder $query, $frequency): Builder => $query->whereBetween('frequency', $frequency),
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -146,7 +242,8 @@ class GejalaResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('daerah');
+            ->defaultSort('severity_score', 'desc')
+            ->poll('30s'); // Auto-refresh every 30 seconds
     }
 
     public static function getPages(): array

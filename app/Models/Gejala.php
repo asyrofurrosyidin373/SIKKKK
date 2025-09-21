@@ -15,11 +15,17 @@ class Gejala extends Model
         'id_gejala',
         'gejala',
         'daerah',
-        'jenis_tanaman'
+        'jenis_tanaman',
+        'is_active',
+        'frequency',
+        'severity_score'
     ];
 
     protected $casts = [
         'daerah' => 'string',
+        'is_active' => 'boolean',
+        'frequency' => 'integer',
+        'severity_score' => 'decimal:2',
     ];
 
     public function hamaPenyakit(): BelongsToMany
@@ -69,6 +75,48 @@ class Gejala extends Model
             'Batang' => 'text-success',
             'Daun' => 'text-primary',
             default => 'text-muted'
+        };
+    }
+
+    // Scope untuk filter aktif
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    // Scope untuk filter berdasarkan frekuensi
+    public function scopeByFrequency($query, $minFrequency = 0)
+    {
+        return $query->where('frequency', '>=', $minFrequency);
+    }
+
+    // Scope untuk filter berdasarkan severity
+    public function scopeBySeverity($query, $minSeverity = 0)
+    {
+        return $query->where('severity_score', '>=', $minSeverity);
+    }
+
+    // Method untuk mendapatkan tingkat keparahan
+    public function getSeverityLevelAttribute(): string
+    {
+        return match(true) {
+            $this->severity_score >= 8 => 'Sangat Parah',
+            $this->severity_score >= 6 => 'Parah',
+            $this->severity_score >= 4 => 'Sedang',
+            $this->severity_score >= 2 => 'Ringan',
+            default => 'Sangat Ringan'
+        };
+    }
+
+    // Method untuk mendapatkan warna severity
+    public function getSeverityColorAttribute(): string
+    {
+        return match(true) {
+            $this->severity_score >= 8 => 'text-danger',
+            $this->severity_score >= 6 => 'text-warning',
+            $this->severity_score >= 4 => 'text-info',
+            $this->severity_score >= 2 => 'text-primary',
+            default => 'text-success'
         };
     }
 }
