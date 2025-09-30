@@ -19,9 +19,6 @@
                 <button class="btn btn-outline-success" onclick="window.print()">
                     <i class="fas fa-print me-2"></i>Cetak
                 </button>
-                <button class="btn btn-primary" onclick="shareVarietas()">
-                    <i class="fas fa-share me-2"></i>Bagikan
-                </button>
             </div>
         </div>
 
@@ -141,7 +138,7 @@
                                         <i class="fas fa-clock text-white"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-bold">{{ $varietas->umur_masak ?? 'N/A' }} hari</div>
+                                        <div class="fw-bold">{{ $varietas->umur_masak ?? 'N/A' }}</div>
                                         <small class="text-muted">Umur Masak</small>
                                     </div>
                                 </div>
@@ -152,7 +149,7 @@
                                         <i class="fas fa-arrows-alt-v text-white"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-bold">{{ $varietas->tinggi_tanaman ?? 'N/A' }} cm</div>
+                                        <div class="fw-bold">{{ $varietas->tinggi_tanaman ?? 'N/A' }}</div>
                                         <small class="text-muted">Tinggi Tanaman</small>
                                     </div>
                                 </div>
@@ -187,10 +184,10 @@
                             {{-- Check if resistensiOpt relationship exists and has data --}}
                             @if (method_exists($varietas, 'resistensiOpt') && $varietas->resistensiOpt && $varietas->resistensiOpt->count() > 0)
                                 <div class="mb-3">
-                                    <h6 class="text-primary">Resistensi Tambahan</h6>
+                                    <h6 class="text-success">Resistensi Tambahan</h6>
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach ($varietas->resistensiOpt as $opt)
-                                            <span class="badge bg-primary">
+                                            <span class="badge bg-success">
                                                 {{ $opt->nama_opt ?? 'N/A' }}
                                                 @if ($opt->pivot->tingkat_resistensi ?? false)
                                                     ({{ $opt->pivot->tingkat_resistensi }})
@@ -234,7 +231,7 @@
                                         @foreach ($komoditas->kecamatan->take(2) as $kecamatan)
                                             <div class="col-md-6">
                                                 <div class="d-flex align-items-center p-2 bg-light rounded">
-                                                    <i class="fas fa-map-pin text-primary me-2"></i>
+                                                    <i class="fas fa-map-pin text-success me-2"></i>
                                                     <div>
                                                         <div class="fw-bold small">{{ $kecamatan->nama_kecamatan ?? 'N/A' }}</div>
                                                         <small class="text-muted">
@@ -255,7 +252,7 @@
                                 }) > 6)
                                 <div class="text-center mt-3">
                                     <a href="{{ route('peta') }}?varietas={{ $varietas->id }}"
-                                        class="btn btn-outline-primary">
+                                        class="btn btn-outline-success">
                                         <i class="fas fa-map me-2"></i>Lihat Semua di Peta
                                     </a>
                                 </div>
@@ -273,13 +270,13 @@
                         <div class="card-body">
                             @if ($varietas->adaptasi_lingkungan ?? false)
                                 <div class="mb-3">
-                                    <h6 class="text-info">Adaptasi Lingkungan</h6>
+                                    <h6 class="text-success">Adaptasi Lingkungan</h6>
                                     <p class="mb-0">{{ $varietas->adaptasi_lingkungan }}</p>
                                 </div>
                             @endif
                             @if ($varietas->rekomendasi_tanam ?? false)
                                 <div>
-                                    <h6 class="text-info">Rekomendasi Penanaman</h6>
+                                    <h6 class="text-success">Rekomendasi Penanaman</h6>
                                     <p class="mb-0">{{ $varietas->rekomendasi_tanam }}</p>
                                 </div>
                             @endif

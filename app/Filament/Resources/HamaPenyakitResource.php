@@ -1,5 +1,5 @@
 <?php
-// app/Filament/Resources/HamaPenyakitResource.php
+// app/Filament\Resources/HamaPenyakitResource.php
 
 namespace App\Filament\Resources;
 
@@ -18,7 +18,7 @@ use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\RangeSlider;
+use Filament\Forms\Components\Grid;
 
 class HamaPenyakitResource extends Resource
 {
@@ -27,6 +27,7 @@ class HamaPenyakitResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-bug-ant';
 
     protected static ?string $navigationLabel = 'Hama & Penyakit';
+    protected static ?string $navigationGroup = 'Diagnosis';
 
     protected static ?string $modelLabel = 'Hama & Penyakit';
 
@@ -170,7 +171,7 @@ class HamaPenyakitResource extends Resource
                     ])
                     ->icons([
                         'heroicon-m-bug-ant' => 'Hama',
-                        'heroicon-m-virus' => 'Penyakit',
+                        'heroicon-m-bars-2' => 'Penyakit',
                     ]),
                 
                 Tables\Columns\TextColumn::make('jenis_tanaman')
@@ -235,17 +236,31 @@ class HamaPenyakitResource extends Resource
                 
                 Filter::make('priority_range')
                     ->form([
-                        RangeSlider::make('priority')
-                            ->label('Rentang Prioritas')
-                            ->min(1)
-                            ->max(10)
-                            ->step(1)
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('priority_min')
+                                    ->label('Prioritas Minimum')
+                                    ->numeric()
+                                    ->placeholder('1')
+                                    ->minValue(1)
+                                    ->maxValue(10),
+                                TextInput::make('priority_max')
+                                    ->label('Prioritas Maksimum')
+                                    ->numeric()
+                                    ->placeholder('10')
+                                    ->minValue(1)
+                                    ->maxValue(10),
+                            ])
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['priority'],
-                                fn (Builder $query, $priority): Builder => $query->whereBetween('priority', $priority),
+                                $data['priority_min'],
+                                fn (Builder $query, $min): Builder => $query->where('priority', '>=', $min),
+                            )
+                            ->when(
+                                $data['priority_max'],
+                                fn (Builder $query, $max): Builder => $query->where('priority', '<=', $max),
                             );
                     }),
                 

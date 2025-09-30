@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import '../css/app.css';
 import App from './App.vue'; // Impor App.vue sebagai root component
 import AppLayout from './components/AppLayout.vue';
 import HalamanUtama from './components/HalamanUtama.vue';

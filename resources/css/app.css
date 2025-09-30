@@ -1,14 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-/* Tambahan custom CSS jika diperlukan */
 body {
-    font-family: 'Roboto', sans-serif; /* Sesuaikan dengan font-farm di tailwind.config.js */
-    background-color: #90EE90; /* Fallback background jika farm-bg gagal */
+    font-family: 'Roboto', sans-serif; 
+    background-color: #f0fdf4; 
 }
 
-/* Contoh styling tambahan untuk elemen spesifik */
 .map-container {
-    border: 2px solid #8B4513; /* soil-brown */
+    border: 2px solid #16a34a; 
 }

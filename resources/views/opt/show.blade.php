@@ -3,23 +3,14 @@
 @section('title', $opt->nama_penyakit . ' - Detail OPT')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('opt.index') }}">OPT</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ $opt->nama_penyakit }}</li>
-        </ol>
-    </nav>
-
+<div class="container">
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex justify-content-between align-items-end">
                 <div>
                     <h1 class="h3 mb-2 text-gray-800">
-                        <span class="badge bg-{{ $opt->terjangkit == 'Hama' ? 'danger' : 'warning' }} me-3 fs-6">
+                        <span class="badge bg-success me-3 fs-6">
                             {{ $opt->terjangkit }}
                         </span>
                         {{ $opt->nama_penyakit }}
@@ -34,12 +25,9 @@
                     </p>
                 </div>
                 <div>
-                    <button class="btn btn-outline-primary" onclick="window.print()">
+                    <button class="btn btn-outline-success " onclick="window.print()">
                         <i class="fas fa-print me-1"></i> Cetak
                     </button>
-                    <a href="{{ route('deteksi.index') }}" class="btn btn-primary">
-                        <i class="fas fa-search me-1"></i> Deteksi Sekarang
-                    </a>
                 </div>
             </div>
         </div>
@@ -49,8 +37,8 @@
         <!-- Main Content -->
         <div class="col-lg-8">
             <!-- Image and Description -->
-            <div class="card shadow mb-4">
-                <div class="card-header">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
                     <h5 class="mb-0">
                         <i class="fas fa-info-circle me-2"></i>
                         Deskripsi
@@ -82,7 +70,7 @@
                                 <tr>
                                     <td><strong>Jenis:</strong></td>
                                     <td>
-                                        <span class="badge bg-{{ $opt->terjangkit == 'Hama' ? 'danger' : 'warning' }}">
+                                        <span class="badge bg-success">
                                             {{ $opt->terjangkit }}
                                         </span>
                                     </td>
@@ -123,8 +111,8 @@
             </div>
 
             <!-- Gejala -->
-            <div class="card shadow mb-4">
-                <div class="card-header">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
                     <h5 class="mb-0">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         Gejala yang Terdeteksi
@@ -134,7 +122,7 @@
                     @if($opt->gejala->count() > 0)
                         @foreach($opt->gejala->groupBy('daerah') as $daerah => $gejalaDaerah)
                         <div class="mb-4">
-                            <h6 class="text-{{ $gejalaDaerah->first()->color }}">
+                            <h6 class="text-success">
                                 <i class="{{ $gejalaDaerah->first()->icon }} me-2"></i>
                                 {{ $daerah }}
                             </h6>
@@ -151,7 +139,7 @@
                                                     </small>
                                                 </div>
                                                 <div class="text-end">
-                                                    <span class="badge bg-{{ $gejala->severity_color }} mb-1">
+                                                    <span class="badge bg-success mb-1">
                                                         {{ $gejala->severity_level }}
                                                     </span>
                                                     <br>
@@ -176,9 +164,13 @@
                 </div>
             </div>
 
-            <!-- Pengendalian -->
-            <div class="card shadow mb-4">
-                <div class="card-header">
+            
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
                     <h5 class="mb-0">
                         <i class="fas fa-shield-alt me-2"></i>
                         Metode Pengendalian
@@ -188,67 +180,30 @@
                     @php
                         $pengendalian = $opt->getControlRecommendations();
                     @endphp
-                    
                     @if(count($pengendalian) > 0)
                         @foreach($pengendalian as $method)
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center mb-2">
-                                <span class="badge bg-primary me-2">{{ $method['priority'] }}</span>
-                                <h6 class="mb-0 text-capitalize">
-                                    {{ str_replace('_', ' ', $method['type']) }}
-                                </h6>
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-success me-2">{{ $method['priority'] }}</span>
+                                    <h6 class="mb-0 text-capitalize">{{ str_replace('_', ' ', $method['type']) }}</h6>
+                                </div>
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-0">{{ $method['method'] }}</p>
+                                </div>
                             </div>
-                            <div class="bg-light p-3 rounded">
-                                <p class="mb-0">{{ $method['method'] }}</p>
-                            </div>
-                        </div>
                         @endforeach
                     @else
-                    <div class="text-center py-4">
-                        <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
-                        <p class="text-muted">Belum ada data pengendalian untuk OPT ini</p>
-                    </div>
+                        <div class="text-center py-4">
+                            <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">Belum ada data pengendalian untuk OPT ini</p>
+                        </div>
                     @endif
                 </div>
             </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Quick Actions -->
-            <div class="card shadow mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-bolt me-2"></i>
-                        Aksi Cepat
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('deteksi.index') }}" class="btn btn-primary">
-                            <i class="fas fa-search me-1"></i>
-                            Deteksi OPT Ini
-                        </a>
-                        <button class="btn btn-outline-info" onclick="showGejalaModal()">
-                            <i class="fas fa-list me-1"></i>
-                            Lihat Semua Gejala
-                        </button>
-                        <button class="btn btn-outline-success" onclick="showPengendalianModal()">
-                            <i class="fas fa-shield-alt me-1"></i>
-                            Lihat Pengendalian
-                        </button>
-                        <a href="{{ route('opt.index') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left me-1"></i>
-                            Kembali ke Daftar
-                        </a>
-                    </div>
-                </div>
-            </div>
-
             <!-- Related OPTs -->
             @if($relatedOpts->count() > 0)
             <div class="card shadow mb-4">
-                <div class="card-header">
+                <div class="card-header bg-success text-white">
                     <h5 class="mb-0">
                         <i class="fas fa-link me-2"></i>
                         OPT Terkait
@@ -267,7 +222,7 @@
                                 {{ $relatedOpt->gejala_count }} gejala sama
                             </small>
                         </div>
-                        <span class="badge bg-{{ $relatedOpt->terjangkit == 'Hama' ? 'danger' : 'warning' }}">
+                        <span class="badge bg-success">
                             {{ $relatedOpt->terjangkit }}
                         </span>
                     </div>
@@ -275,30 +230,6 @@
                 </div>
             </div>
             @endif
-
-            <!-- Detection Stats -->
-            <div class="card shadow">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-bar me-2"></i>
-                        Statistik Deteksi
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-6">
-                            <div class="border-end">
-                                <h4 class="text-primary">{{ $detectionStats }}</h4>
-                                <small class="text-muted">Total Deteksi</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <h4 class="text-success">{{ $opt->gejala->count() }}</h4>
-                            <small class="text-muted">Total Gejala</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

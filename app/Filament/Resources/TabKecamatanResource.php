@@ -5,10 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TabKecamatanResource\Pages;
 use App\Models\TabKecamatan;
 use App\Models\TabKabupaten;
-use App\Models\TabBulan;
-use App\Models\KomKacangHijau;
-use App\Models\KomKacangTanah;
-use App\Models\KomKedelai;
+use App\Models\VarietasKedelai;
+use App\Models\VarietasKacangTanah;
+use App\Models\VarietasKacangHijau;
+use App\Models\HamaPenyakit;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,6 +19,15 @@ use Filament\Forms\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section as InfoSection;
+use Filament\Infolists\Components\Grid as InfoGrid;
 
 class TabKecamatanResource extends Resource
 {
@@ -50,175 +59,231 @@ class TabKecamatanResource extends Resource
                                 Select::make('tab_kabupaten_id')
                                     ->label('Kabupaten')
                                     ->required()
+                                    ->options(TabKabupaten::with('provinsi')->get()->pluck('nama_kabupaten', 'id'))
                                     ->searchable()
-                                    ->options(function () {
-                                        return TabKabupaten::pluck('nama_kabupaten', 'id');
-                                    })
-                                    ->placeholder('Pilih Kabupaten'),
+                                    ->preload(),
+
+                                TextInput::make('nama_kecamatan')
+                                    ->label('Nama Kecamatan')
+                                    ->required()
+                                    ->maxLength(64)
+                                    ->placeholder('Contoh: Donomulyo')
+                                    ->columnSpanFull(),
                             ]),
+                    ]),
 
-                        TextInput::make('nama_kecamatan')
-                            ->label('Nama Kecamatan')
-                            ->required()
-                            ->maxLength(64)
-                            ->placeholder('Nama Kecamatan')
+                Section::make('OPT (Hama)')
+                    ->description('Pilih OPT jenis Hama yang relevan dengan kecamatan ini')
+                    ->icon('heroicon-o-bug-ant')
+                    ->schema([
+                        Select::make('opt_id')
+                            ->label('OPT Hama')
+                            ->multiple()
+                            ->options(function () {
+                                return HamaPenyakit::where('terjangkit', 'Hama')
+                                    ->orderBy('nama_penyakit')
+                                    ->pluck('nama_penyakit', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->helperText('Simpan sebagai daftar ID OPT (field JSON)')
                             ->columnSpanFull(),
+                    ]),
 
+                Section::make('Koordinat & Lokasi')
+                    ->description('Data geografis kecamatan')
+                    ->icon('heroicon-o-globe-alt')
+                    ->schema([
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('latitude')
                                     ->label('Latitude')
                                     ->numeric()
-                                    ->placeholder('-7.123456'),
+                                    ->step(0.000001)
+                                    ->placeholder('-8.2435')
+                                    ->helperText('Koordinat lintang'),
 
                                 TextInput::make('longitude')
                                     ->label('Longitude')
                                     ->numeric()
-                                    ->placeholder('110.123456'),
+                                    ->step(0.000001)
+                                    ->placeholder('112.4419')
+                                    ->helperText('Koordinat bujur'),
                             ]),
                     ]),
 
-                Section::make('🌱 Data Komoditas Unggulan')
-                    ->description('Pilih komoditas unggulan untuk setiap jenis tanaman di kecamatan ini')
-                    ->icon('heroicon-o-cube')
-                    ->schema([
-                        Grid::make(1)
-                            ->schema([
-                                Select::make('kom_kedelai_id')
-                                    ->label('🫘 Komoditas Kedelai Unggulan')
-                                    ->searchable()
-                                    ->placeholder('Pilih varietas kedelai unggulan...')
-                                    ->options(function () {
-                                        return KomKedelai::pluck('provitas', 'id');
-                                    })
-                                    ->helperText('Pilih varietas kedelai yang paling cocok untuk wilayah ini')
-                                    ->columnSpanFull(),
-
-                                Select::make('kom_kacang_tanah_id')
-                                    ->label('🥜 Komoditas Kacang Tanah Unggulan')
-                                    ->searchable()
-                                    ->placeholder('Pilih varietas kacang tanah unggulan...')
-                                    ->options(function () {
-                                        return KomKacangTanah::pluck('provitas', 'id');
-                                    })
-                                    ->helperText('Pilih varietas kacang tanah yang paling cocok untuk wilayah ini')
-                                    ->columnSpanFull(),
-
-                                Select::make('kom_kacang_hijau_id')
-                                    ->label('🫛 Komoditas Kacang Hijau Unggulan')
-                                    ->searchable()
-                                    ->placeholder('Pilih varietas kacang hijau unggulan...')
-                                    ->options(function () {
-                                        return KomKacangHijau::pluck('provitas', 'id');
-                                    })
-                                    ->helperText('Pilih varietas kacang hijau yang paling cocok untuk wilayah ini')
-                                    ->columnSpanFull(),
-                            ]),
-                    ])
-                    ->collapsible()
-                    ->collapsed(false),
-
-                Section::make('🌍 Data Kondisi Tanah')
-                    ->description('Informasi kimia dan fisik tanah')
+                Section::make('Data Tanah')
+                    ->description('Karakteristik tanah kecamatan')
+                    ->icon('heroicon-o-beaker')
                     ->schema([
                         Grid::make(3)
                             ->schema([
                                 TextInput::make('ip_lahan')
-                                    ->label('IP Lahan (%)')
+                                    ->label('IP Lahan')
                                     ->numeric()
-                                    ->placeholder('0.00'),
+                                    ->step(0.01)
+                                    ->placeholder('3.2')
+                                    ->helperText('Indeks Produktivitas Lahan'),
 
                                 TextInput::make('kdr_p')
-                                    ->label('Kadar P (ppm)')
+                                    ->label('Kadar P')
                                     ->numeric()
-                                    ->placeholder('0.00'),
+                                    ->step(0.01)
+                                    ->placeholder('2.5')
+                                    ->helperText('Kadar Fosfor'),
 
                                 TextInput::make('kdr_c')
-                                    ->label('Kadar C (%)')
+                                    ->label('Kadar C')
                                     ->numeric()
-                                    ->placeholder('0.00'),
-                            ]),
+                                    ->step(0.01)
+                                    ->placeholder('2.1')
+                                    ->helperText('Kadar Karbon'),
 
-                        Grid::make(2)
-                            ->schema([
                                 TextInput::make('kdr_k')
-                                    ->label('Kadar K (me/100g)')
+                                    ->label('Kadar K')
                                     ->numeric()
-                                    ->placeholder('0.00'),
+                                    ->step(0.01)
+                                    ->placeholder('1.8')
+                                    ->helperText('Kadar Kalium'),
 
                                 TextInput::make('ktk')
-                                    ->label('KTK (me/100g)')
+                                    ->label('KTK')
                                     ->numeric()
-                                    ->placeholder('0.00'),
+                                    ->step(0.01)
+                                    ->placeholder('2.9')
+                                    ->helperText('Kapasitas Tukar Kation'),
                             ]),
-                    ])
-                    ->collapsible()
-                    ->collapsed(true),
+                    ]),
 
-                Section::make('🌧️ Pola Cuaca')
-                    ->description('Informasi curah hujan bulanan')
+                Section::make('Data Komoditas')
+                    ->description('Informasi komoditas yang dibudidayakan')
+                    ->icon('heroicon-o-bars-3')
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                Select::make('bulan_hujan')
-                                    ->label('Bulan Hujan')
-                                    ->multiple()
+                                Select::make('jenis_komoditas')
+                                    ->label('Jenis Komoditas')
+                                    ->options([
+                                        'kedelai' => 'Kedelai',
+                                        'kacang_tanah' => 'Kacang Tanah',
+                                        'kacang_hijau' => 'Kacang Hijau',
+                                    ])
+                                    ->required()
                                     ->searchable()
-                                    ->options(function () {
-                                        return TabBulan::orderBy('angka_bulan')
-                                            ->pluck('nama_bulan', 'id');
-                                    })
-                                    ->placeholder('Pilih bulan-bulan dengan curah hujan tinggi'),
+                                    ->reactive(),
 
-                                Select::make('bulan_kering')
-                                    ->label('Bulan Kering')
+                                Select::make('varietas_id')
+                                    ->label('Varietas')
                                     ->multiple()
-                                    ->searchable()
-                                    ->options(function () {
-                                        return TabBulan::orderBy('angka_bulan')
-                                            ->pluck('nama_bulan', 'id');
+                                    ->options(function (callable $get) {
+                                        $jenis = $get('jenis_komoditas');
+                                        switch ($jenis) {
+                                            case 'kedelai':
+                                                return VarietasKedelai::pluck('nama_varietas', 'id');
+                                            case 'kacang_tanah':
+                                                return VarietasKacangTanah::pluck('nama_varietas', 'id');
+                                            case 'kacang_hijau':
+                                                return VarietasKacangHijau::pluck('nama_varietas', 'id');
+                                            default:
+                                                return [];
+                                        }
                                     })
-                                    ->placeholder('Pilih bulan-bulan dengan curah hujan rendah'),
+                                    ->searchable()
+                                    ->preload(),
                             ]),
-                    ])
-                    ->collapsible()
-                    ->collapsed(true),
 
-                Section::make('📅 Rekomendasi Waktu Tanam')
-                    ->description('Waktu tanam optimal untuk setiap komoditas')
+                        Grid::make(3)
+                            ->schema([
+                                TextInput::make('provitas')
+                                    ->label('Provitas')
+                                    ->numeric()
+                                    ->step(0.01)
+                                    ->placeholder('2.5')
+                                    ->helperText('Nilai provitas'),
+
+                                TextInput::make('nilai_potensi')
+                                    ->label('Nilai Potensi')
+                                    ->numeric()
+                                    ->step(0.01)
+                                    ->placeholder('3.2')
+                                    ->helperText('Nilai potensi peningkatan'),
+
+                                TextInput::make('pot_peningkatan_judgement')
+                                    ->label('Judgement Peningkatan')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(10)
+                                    ->placeholder('7')
+                                    ->helperText('Skala 1-10'),
+                            ]),
+                    ]),
+
+                Section::make('Data Produksi')
+                    ->description('Data produksi komoditas')
+                    ->icon('heroicon-o-chart-bar')
                     ->schema([
-                        Select::make('rekomendasi_waktu_tanam_kedelai')
-                            ->label('⏰ Waktu Tanam Kedelai')
-                            ->multiple()
-                            ->searchable()
-                            ->options(function () {
-                                return TabBulan::orderBy('angka_bulan')
-                                    ->pluck('nama_bulan', 'id');
-                            })
-                            ->placeholder('Pilih bulan-bulan untuk menanam kedelai'),
+                        Grid::make(3)
+                            ->schema([
+                                TextInput::make('luas_tanam')
+                                    ->label('Luas Tanam (ha)')
+                                    ->numeric()
+                                    ->step(0.01)
+                                    ->placeholder('100.50')
+                                    ->helperText('Luas tanam dalam hektar'),
 
-                        Select::make('rekomendasi_waktu_tanam_kacang_tanah')
-                            ->label('⏰ Waktu Tanam Kacang Tanah')
-                            ->multiple()
-                            ->searchable()
-                            ->options(function () {
-                                return TabBulan::orderBy('angka_bulan')
-                                    ->pluck('nama_bulan', 'id');
-                            })
-                            ->placeholder('Pilih bulan-bulan untuk menanam kacang tanah'),
+                                TextInput::make('produktivitas')
+                                    ->label('Produktivitas (ton/ha)')
+                                    ->numeric()
+                                    ->step(0.01)
+                                    ->placeholder('2.5')
+                                    ->helperText('Produktivitas per hektar'),
 
-                        Select::make('rekomendasi_waktu_tanam_kacang_hijau')
-                            ->label('⏰ Waktu Tanam Kacang Hijau')
-                            ->multiple()
-                            ->searchable()
-                            ->options(function () {
-                                return TabBulan::orderBy('angka_bulan')
-                                    ->pluck('nama_bulan', 'id');
-                            })
-                            ->placeholder('Pilih bulan-bulan untuk menanam kacang hijau'),
-                    ])
-                    ->collapsible()
-                    ->collapsed(true),
+                                TextInput::make('total_produksi')
+                                    ->label('Total Produksi (ton)')
+                                    ->numeric()
+                                    ->step(0.01)
+                                    ->placeholder('250.75')
+                                    ->helperText('Total produksi dalam ton'),
+                            ]),
+                    ]),
+
+                Section::make('Rekomendasi Waktu Tanam')
+                    ->description('Waktu tanam yang direkomendasikan untuk setiap komoditas')
+                    ->icon('heroicon-o-calendar')
+                    ->schema([
+                        TagsInput::make('rekomendasi_waktu_tanam_kedelai')
+                            ->label('Waktu Tanam Kedelai')
+                            ->placeholder('Contoh: Maret, April')
+                            ->helperText('Bulan-bulan yang direkomendasikan untuk menanam kedelai'),
+
+                        TagsInput::make('rekomendasi_waktu_tanam_kacang_tanah')
+                            ->label('Waktu Tanam Kacang Tanah')
+                            ->placeholder('Contoh: April, Mei')
+                            ->helperText('Bulan-bulan yang direkomendasikan untuk menanam kacang tanah'),
+
+                        TagsInput::make('rekomendasi_waktu_tanam_kacang_hijau')
+                            ->label('Waktu Tanam Kacang Hijau')
+                            ->placeholder('Contoh: Mei, Juni')
+                            ->helperText('Bulan-bulan yang direkomendasikan untuk menanam kacang hijau'),
+                    ]),
+
+                Section::make('Data Iklim')
+                    ->description('Pola iklim di kecamatan')
+                    ->icon('heroicon-o-cloud')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TagsInput::make('bulan_hujan')
+                                    ->label('Bulan Hujan')
+                                    ->placeholder('Contoh: Januari, Februari, Maret')
+                                    ->helperText('Bulan-bulan dengan curah hujan tinggi'),
+
+                                TagsInput::make('bulan_kering')
+                                    ->label('Bulan Kering')
+                                    ->placeholder('Contoh: Juli, Agustus, September')
+                                    ->helperText('Bulan-bulan dengan curah hujan rendah'),
+                            ]),
+                    ]),
             ]);
     }
 
@@ -232,77 +297,147 @@ class TabKecamatanResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('nama_kecamatan')
-                    ->label('Kecamatan')
+                    ->label('Nama Kecamatan')
                     ->searchable()
                     ->sortable()
-                    ->wrap(),
+                    ->weight('bold'),
 
                 TextColumn::make('kabupaten.nama_kabupaten')
                     ->label('Kabupaten')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('komoditasKedelai.provitas')
-                    ->label('Kedelai')
-                    ->limit(20)
-                    ->tooltip(function (TextColumn $column): ?string {
-                        $state = $column->getState();
-                        return $state;
-                    })
-                    ->toggleable(),
+                TextColumn::make('kabupaten.provinsi.nama_provinsi')
+                    ->label('Provinsi')
+                    ->searchable()
+                    ->sortable(),
 
-                TextColumn::make('komoditasKacangTanah.provitas')
-                    ->label('Kacang Tanah')
-                    ->limit(20)
-                    ->tooltip(function (TextColumn $column): ?string {
-                        $state = $column->getState();
-                        return $state;
-                    })
-                    ->toggleable(),
+                TextColumn::make('formatted_coordinates')
+                    ->label('Koordinat')
+                    ->getStateUsing(fn ($record) => $record->formatted_coordinates)
+                    ->color('gray'),
 
-                TextColumn::make('komoditasKacangHijau.provitas')
-                    ->label('Kacang Hijau')
-                    ->limit(20)
+                TextColumn::make('jenis_komoditas')
+                    ->label('Jenis Komoditas')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'kedelai' => 'success',
+                        'kacang_tanah' => 'warning',
+                        'kacang_hijau' => 'info',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'kedelai' => 'Kedelai',
+                        'kacang_tanah' => 'Kacang Tanah',
+                        'kacang_hijau' => 'Kacang Hijau',
+                        default => $state,
+                    })
+                    ->sortable(),
+
+                TextColumn::make('nama_varietas')
+                    ->label('Varietas')
+                    ->limit(30)
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
+                        if (strlen($state) <= 30) {
+                            return null;
+                        }
                         return $state;
+                    }),
+
+                TextColumn::make('opt_list')
+                    ->label('OPT (Hama)')
+                    ->limit(40)
+                    ->getStateUsing(function ($record) {
+                        try {
+                            $ids = $record->opt_id;
+                            if (empty($ids)) return '';
+                            if (!is_array($ids)) {
+                                $ids = json_decode($ids, true) ?: [];
+                            }
+                            if (empty($ids)) return '';
+                            return HamaPenyakit::whereIn('id', $ids)->pluck('nama_penyakit')->join(', ');
+                        } catch (\Throwable $e) {
+                            return '';
+                        }
                     })
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('luas_tanam')
+                    ->label('Luas Tanam (ha)')
+                    ->numeric(2)
+                    ->sortable(),
+
+                TextColumn::make('total_produksi')
+                    ->label('Produksi (ton)')
+                    ->numeric(2)
+                    ->sortable(),
 
                 TextColumn::make('ip_lahan')
                     ->label('IP Lahan')
-                    ->suffix('%')
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->numeric(2)
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime()
                     ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tab_kabupaten_id')
+                SelectFilter::make('tab_kabupaten_id')
                     ->label('Kabupaten')
-                    ->relationship('kabupaten', 'nama_kabupaten'),
+                    ->options(TabKabupaten::all()->pluck('nama_kabupaten', 'id'))
+                    ->searchable(),
 
-                Tables\Filters\SelectFilter::make('kom_kedelai_id')
-                    ->label('Komoditas Kedelai')
-                    ->relationship('komoditasKedelai', 'provitas'),
+                SelectFilter::make('jenis_komoditas')
+                    ->label('Jenis Komoditas')
+                    ->options([
+                        'kedelai' => 'Kedelai',
+                        'kacang_tanah' => 'Kacang Tanah',
+                        'kacang_hijau' => 'Kacang Hijau',
+                    ]),
 
-                Tables\Filters\SelectFilter::make('kom_kacang_tanah_id')
-                    ->label('Komoditas Kacang Tanah')
-                    ->relationship('komoditasKacangTanah', 'provitas'),
+                SelectFilter::make('has_coordinates')
+                    ->label('Koordinat')
+                    ->options([
+                        '1' => 'Ada Koordinat',
+                        '0' => 'Tanpa Koordinat',
+                    ])
+                    ->query(function ($query, $data) {
+                        if ($data['value'] === '1') {
+                            return $query->whereNotNull('latitude')->whereNotNull('longitude');
+                        } elseif ($data['value'] === '0') {
+                            return $query->where(function ($q) {
+                                $q->whereNull('latitude')->orWhereNull('longitude');
+                            });
+                        }
+                    }),
 
-                Tables\Filters\SelectFilter::make('kom_kacang_hijau_id')
-                    ->label('Komoditas Kacang Hijau')
-                    ->relationship('komoditasKacangHijau', 'provitas'),
+                SelectFilter::make('has_production')
+                    ->label('Data Produksi')
+                    ->options([
+                        '1' => 'Ada Data Produksi',
+                        '0' => 'Tanpa Data Produksi',
+                    ])
+                    ->query(function ($query, $data) {
+                        if ($data['value'] === '1') {
+                            return $query->whereNotNull('luas_tanam')
+                                        ->whereNotNull('produktivitas')
+                                        ->whereNotNull('total_produksi');
+                        } elseif ($data['value'] === '0') {
+                            return $query->where(function ($q) {
+                                $q->whereNull('luas_tanam')
+                                  ->orWhereNull('produktivitas')
+                                  ->orWhereNull('total_produksi');
+                            });
+                        }
+                    }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -312,17 +447,161 @@ class TabKecamatanResource extends Resource
             ->defaultSort('nama_kecamatan');
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                InfoSection::make('Informasi Dasar')
+                    ->schema([
+                        InfoGrid::make(2)
+                            ->schema([
+                                TextEntry::make('id')
+                                    ->label('Kode Kecamatan'),
+                                TextEntry::make('nama_kecamatan')
+                                    ->label('Nama Kecamatan')
+                                    ->weight('bold'),
+                                TextEntry::make('kabupaten.nama_kabupaten')
+                                    ->label('Kabupaten'),
+                                TextEntry::make('kabupaten.provinsi.nama_provinsi')
+                                    ->label('Provinsi'),
+                            ]),
+                    ]),
+
+                InfoSection::make('Koordinat & Lokasi')
+                    ->schema([
+                        InfoGrid::make(2)
+                            ->schema([
+                                TextEntry::make('latitude')
+                                    ->label('Latitude')
+                                    ->numeric(6),
+                                TextEntry::make('longitude')
+                                    ->label('Longitude')
+                                    ->numeric(6),
+                            ]),
+                    ]),
+
+                InfoSection::make('Data Tanah')
+                    ->schema([
+                        InfoGrid::make(3)
+                            ->schema([
+                                TextEntry::make('ip_lahan')
+                                    ->label('IP Lahan')
+                                    ->numeric(2),
+                                TextEntry::make('kdr_p')
+                                    ->label('Kadar P')
+                                    ->numeric(2),
+                                TextEntry::make('kdr_c')
+                                    ->label('Kadar C')
+                                    ->numeric(2),
+                                TextEntry::make('kdr_k')
+                                    ->label('Kadar K')
+                                    ->numeric(2),
+                                TextEntry::make('ktk')
+                                    ->label('KTK')
+                                    ->numeric(2),
+                            ]),
+                    ]),
+
+                InfoSection::make('Data Komoditas')
+                    ->schema([
+                        InfoGrid::make(2)
+                            ->schema([
+                                TextEntry::make('jenis_komoditas')
+                                    ->label('Jenis Komoditas')
+                                    ->badge()
+                                    ->color(fn (string $state): string => match ($state) {
+                                        'kedelai' => 'success',
+                                        'kacang_tanah' => 'warning',
+                                        'kacang_hijau' => 'info',
+                                        default => 'gray',
+                                    })
+                                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                                        'kedelai' => 'Kedelai',
+                                        'kacang_tanah' => 'Kacang Tanah',
+                                        'kacang_hijau' => 'Kacang Hijau',
+                                        default => $state,
+                                    }),
+                                TextEntry::make('nama_varietas')
+                                    ->label('Varietas'),
+                            ]),
+                        InfoGrid::make(3)
+                            ->schema([
+                                TextEntry::make('provitas')
+                                    ->label('Provitas')
+                                    ->numeric(2),
+                                TextEntry::make('nilai_potensi')
+                                    ->label('Nilai Potensi')
+                                    ->numeric(2),
+                                TextEntry::make('pot_peningkatan_judgement')
+                                    ->label('Judgement Peningkatan'),
+                            ]),
+                    ]),
+
+                InfoSection::make('Data Produksi')
+                    ->schema([
+                        InfoGrid::make(3)
+                            ->schema([
+                                TextEntry::make('luas_tanam')
+                                    ->label('Luas Tanam (ha)')
+                                    ->numeric(2),
+                                TextEntry::make('produktivitas')
+                                    ->label('Produktivitas (ton/ha)')
+                                    ->numeric(2),
+                                TextEntry::make('total_produksi')
+                                    ->label('Total Produksi (ton)')
+                                    ->numeric(2),
+                            ]),
+                    ]),
+
+                InfoSection::make('Rekomendasi Waktu Tanam')
+                    ->schema([
+                        TextEntry::make('rekomendasi_waktu_tanam_kedelai')
+                            ->label('Kedelai')
+                            ->badge()
+                            ->getStateUsing(fn ($record) => $record->rekomendasi_waktu_tanam_kedelai ?? []),
+                        TextEntry::make('rekomendasi_waktu_tanam_kacang_tanah')
+                            ->label('Kacang Tanah')
+                            ->badge()
+                            ->getStateUsing(fn ($record) => $record->rekomendasi_waktu_tanam_kacang_tanah ?? []),
+                        TextEntry::make('rekomendasi_waktu_tanam_kacang_hijau')
+                            ->label('Kacang Hijau')
+                            ->badge()
+                            ->getStateUsing(fn ($record) => $record->rekomendasi_waktu_tanam_kacang_hijau ?? []),
+                    ]),
+
+                InfoSection::make('Data Iklim')
+                    ->schema([
+                        InfoGrid::make(2)
+                            ->schema([
+                                TextEntry::make('bulan_hujan')
+                                    ->label('Bulan Hujan')
+                                    ->badge()
+                                    ->color('blue')
+                                    ->getStateUsing(fn ($record) => $record->bulan_hujan ?? []),
+                                TextEntry::make('bulan_kering')
+                                    ->label('Bulan Kering')
+                                    ->badge()
+                                    ->color('orange')
+                                    ->getStateUsing(fn ($record) => $record->bulan_kering ?? []),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListTabKecamatans::route('/'),
             'create' => Pages\CreateTabKecamatan::route('/create'),
+            'view' => Pages\ViewTabKecamatan::route('/{record}'),
             'edit' => Pages\EditTabKecamatan::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 }

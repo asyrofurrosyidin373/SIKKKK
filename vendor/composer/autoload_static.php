@@ -261,8 +261,8 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'ZipStream\\' => 
         array (
@@ -690,10 +690,10 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         ),
         'Filament\\' => 
         array (
-            0 => __DIR__ . '/..' . '/filament/filament/src',
-            1 => __DIR__ . '/..' . '/filament/spatie-laravel-media-library-plugin/src',
-            2 => __DIR__ . '/..' . '/filament/spatie-laravel-settings-plugin/src',
-            3 => __DIR__ . '/..' . '/filament/spatie-laravel-tags-plugin/src',
+            0 => __DIR__ . '/..' . '/filament/spatie-laravel-tags-plugin/src',
+            1 => __DIR__ . '/..' . '/filament/spatie-laravel-settings-plugin/src',
+            2 => __DIR__ . '/..' . '/filament/spatie-laravel-media-library-plugin/src',
+            3 => __DIR__ . '/..' . '/filament/filament/src',
         ),
         'Faker\\' => 
         array (
@@ -874,6 +874,7 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'App\\Filament\\Resources\\TabKecamatanResource\\Pages\\CreateTabKecamatan' => __DIR__ . '/../..' . '/app/Filament/Resources/TabKecamatanResource/Pages/CreateTabKecamatan.php',
         'App\\Filament\\Resources\\TabKecamatanResource\\Pages\\EditTabKecamatan' => __DIR__ . '/../..' . '/app/Filament/Resources/TabKecamatanResource/Pages/EditTabKecamatan.php',
         'App\\Filament\\Resources\\TabKecamatanResource\\Pages\\ListTabKecamatans' => __DIR__ . '/../..' . '/app/Filament/Resources/TabKecamatanResource/Pages/ListTabKecamatans.php',
+        'App\\Filament\\Resources\\TabKecamatanResource\\Pages\\ViewTabKecamatan' => __DIR__ . '/../..' . '/app/Filament/Resources/TabKecamatanResource/Pages/ViewTabKecamatan.php',
         'App\\Filament\\Resources\\TabProvinsiResource' => __DIR__ . '/../..' . '/app/Filament/Resources/TabProvinsiResource.php',
         'App\\Filament\\Resources\\TabProvinsiResource\\Pages\\CreateTabProvinsi' => __DIR__ . '/../..' . '/app/Filament/Resources/TabProvinsiResource/Pages/CreateTabProvinsi.php',
         'App\\Filament\\Resources\\TabProvinsiResource\\Pages\\EditTabProvinsi' => __DIR__ . '/../..' . '/app/Filament/Resources/TabProvinsiResource/Pages/EditTabProvinsi.php',
@@ -902,6 +903,7 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'App\\Http\\Controllers\\Api\\VarietasController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/VarietasController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
+        'App\\Http\\Controllers\\DebugController' => __DIR__ . '/../..' . '/app/Http/Controllers/DebugController.php',
         'App\\Http\\Controllers\\DeteksiController' => __DIR__ . '/../..' . '/app/Http/Controllers/DeteksiController.php',
         'App\\Http\\Controllers\\GejalaController' => __DIR__ . '/../..' . '/app/Http/Controllers/GejalaController.php',
         'App\\Http\\Controllers\\HamaPenyakitController' => __DIR__ . '/../..' . '/app/Http/Controllers/HamaPenyakitController.php',
@@ -1112,7 +1114,9 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\ApiTestDataSeeder' => __DIR__ . '/../..' . '/database/seeders/ApiTestDataSeeder.php',
         'Database\\Seeders\\BulanSeeder' => __DIR__ . '/../..' . '/database/seeders/BulanSeeder.php',
+        'Database\\Seeders\\ComprehensiveSeeder' => __DIR__ . '/../..' . '/database/seeders/ComprehensiveSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
+        'Database\\Seeders\\FixKecamatanSeeder' => __DIR__ . '/../..' . '/database/seeders/FixKecamatanSeeder.php',
         'Database\\Seeders\\GejalaSeeder' => __DIR__ . '/../..' . '/database/seeders/GejalaSeeder.php',
         'Database\\Seeders\\HamaPenyakitSeeder' => __DIR__ . '/../..' . '/database/seeders/HamaPenyakitSeeder.php',
         'Database\\Seeders\\InsektisidaSeeder' => __DIR__ . '/../..' . '/database/seeders/InsektisidaSeeder.php',
@@ -1122,13 +1126,17 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'Database\\Seeders\\KacangTanahOptPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/KacangTanahOptPivotSeeder.php',
         'Database\\Seeders\\KacangTanahVarietasPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/KacangTanahVarietasPivotSeeder.php',
         'Database\\Seeders\\KecamatanBulanPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/KecamatanBulanPivotSeeder.php',
+        'Database\\Seeders\\KecamatanCoordinatesSeeder' => __DIR__ . '/../..' . '/database/seeders/KecamatanCoordinatesSeeder.php',
+        'Database\\Seeders\\KecamatanKomoditasLinkSeeder' => __DIR__ . '/../..' . '/database/seeders/KecamatanKomoditasLinkSeeder.php',
         'Database\\Seeders\\KecamatanSeeder' => __DIR__ . '/../..' . '/database/seeders/KecamatanSeeder.php',
         'Database\\Seeders\\KedelaiOptPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/KedelaiOptPivotSeeder.php',
         'Database\\Seeders\\KedelaiVarietasPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/KedelaiVarietasPivotSeeder.php',
         'Database\\Seeders\\KomKacangHijauSeeder' => __DIR__ . '/../..' . '/database/seeders/KomKacangHijauSeeder.php',
         'Database\\Seeders\\KomKacangTanahSeeder' => __DIR__ . '/../..' . '/database/seeders/KomKacangTanahSeeder.php',
         'Database\\Seeders\\KomKedelaiSeeder' => __DIR__ . '/../..' . '/database/seeders/KomKedelaiSeeder.php',
+        'Database\\Seeders\\KomoditasProductionDataSeeder' => __DIR__ . '/../..' . '/database/seeders/KomoditasProductionDataSeeder.php',
         'Database\\Seeders\\LaporanDeteksiSeeder' => __DIR__ . '/../..' . '/database/seeders/LaporanDeteksiSeeder.php',
+        'Database\\Seeders\\MinimalDataSeeder' => __DIR__ . '/../..' . '/database/seeders/MinimalDataSeeder.php',
         'Database\\Seeders\\OptVarietasPivotSeeder' => __DIR__ . '/../..' . '/database/seeders/OptVarietasPivotSeeder.php',
         'Database\\Seeders\\OptimizedGejalaSeeder' => __DIR__ . '/../..' . '/database/seeders/OptimizedGejalaSeeder.php',
         'Database\\Seeders\\OptimizedHamaPenyakitGejalaSeeder' => __DIR__ . '/../..' . '/database/seeders/OptimizedHamaPenyakitGejalaSeeder.php',
@@ -1140,6 +1148,7 @@ class ComposerStaticInit0fb48fa7383b028ade38cd5877db9b37
         'Database\\Seeders\\PenyakitSeeder' => __DIR__ . '/../..' . '/database/seeders/PenyakitSeeder.php',
         'Database\\Seeders\\PivotSeeder' => __DIR__ . '/../..' . '/database/seeders/PivotSeeder.php',
         'Database\\Seeders\\ProvinsiSeeder' => __DIR__ . '/../..' . '/database/seeders/ProvinsiSeeder.php',
+        'Database\\Seeders\\RealKecamatanDataSeeder' => __DIR__ . '/../..' . '/database/seeders/RealKecamatanDataSeeder.php',
         'Database\\Seeders\\TanamanSeeder' => __DIR__ . '/../..' . '/database/seeders/TanamanSeeder.php',
         'Database\\Seeders\\VarietasKacangHijauSeeder' => __DIR__ . '/../..' . '/database/seeders/VarietasKacangHijauSeeder.php',
         'Database\\Seeders\\VarietasKacangTanahSeeder' => __DIR__ . '/../..' . '/database/seeders/VarietasKacangTanahSeeder.php',

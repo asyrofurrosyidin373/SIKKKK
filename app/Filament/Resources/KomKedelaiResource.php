@@ -19,6 +19,11 @@ class KomKedelaiResource extends Resource
     protected static ?string $navigationLabel = 'Kedelai';
     protected static ?int $navigationSort = 1;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -76,9 +81,6 @@ class KomKedelaiResource extends Resource
                     ->numeric(2)
                     ->sortable()
                     ->label('Nilai Potensi'),
-                Tables\Columns\TextColumn::make('kecamatan_count')
-                    ->counts('kecamatan')
-                    ->label('Jumlah Kecamatan'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

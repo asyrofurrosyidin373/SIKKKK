@@ -61,6 +61,15 @@ class DatabaseSeeder extends Seeder
             LaporanDeteksiSeeder::class,
             ApiTestDataSeeder::class,
             PivotSeeder::class, // custom pivot tambahan
+            
+            // Data enhancement seeders
+            KomoditasProductionDataSeeder::class,
+            KecamatanCoordinatesSeeder::class,
+            KecamatanKomoditasLinkSeeder::class,
+            
+            // Real data seeders
+            RealKecamatanDataSeeder::class,
+            KedelaiPotensiProduksiSeeder::class,
         ]);
     }
 }

@@ -5,12 +5,12 @@
 
 @section('content')
     <div class="container">
-        <!-- Header -->
+        <!-- Header Section -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mt-4">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="h2 text-success"><i class="fas fa-seedling me-2"></i>Varietas Kedelai</h1>
+                        <h1 class="h3 mb-0 text-success">Varietas Kacang Kedelai</h1>
                     </div>
                 </div>
             </div>
@@ -20,13 +20,13 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-success text-white">
                         <h5 class="mb-0">Filter Pencarian</h5>
                     </div>
                     <div class="card-body">
                         <form method="GET" id="filterForm">
                             <!-- Filter Form -->
-                            <div class="container-fluid px-0">
+                            <div class="container px-0">
                                 <div class="row g-4">
                                     <!-- Kolom Kiri -->
                                     <div class="col-md-6">
@@ -226,13 +226,13 @@
 
                                 <!-- Tombol Cari -->
                                 <div class="row mt-4">
-                                    <div class="col-12 text-center">
+                                    <div class="flex col-12 justify-content-end">
                                         <a href="{{ route('varietas.kedelai') }}"
-                                            class="btn btn-outline-secondary px-5 py-2 w-10">
-                                            <i class="fas fa-undo me-2"></i>Reset
+                                            class="btn btn-outline-secondary px-5 py-2 me-2">
+                                            Reset
                                         </a>
-                                        <button type="submit" class="btn btn-success px-5 py-2 me-2 w-10">
-                                            <i class="fas fa-search me-2"></i>CARI
+                                        <button type="submit" class="btn btn-success px-5 py-2">
+                                            CARI
                                         </button>
                                     </div>
                                 </div>
@@ -258,7 +258,7 @@
             <div class="row mb-4" id="resultsSection">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-success">
                             <h5 class="mb-0">
                                 <i class="fas fa-list me-2"></i>Hasil Pencarian
                                 @if (isset($varietas) && $varietas->count() > 0)
@@ -326,7 +326,7 @@
                                                     @endif
                                                 </div>
                                                 <div class="card-footer bg-light">
-                                                    <button class="btn btn-sm btn-outline-success w-100"
+                                                    <button class="btn btn-sm btn-success w-100"
                                                         onclick="viewDetail('{{ $item->id }}')">
                                                         <i class="fas fa-eye me-1"></i>Lihat Detail
                                                     </button>
@@ -399,8 +399,7 @@
     @push('styles')
         <style>
             .varietas-card:hover {
-                transform: translateY(-5px);
-                transition: transform 0.3s ease;
+                transform: none !important;
             }
 
             .badge {

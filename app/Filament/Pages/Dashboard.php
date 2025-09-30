@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\ProvinsiStatsWidget;
-use App\Filament\Widgets\ProvinsiChartWidget; // Jika kamu buat chart
+use App\Filament\Widgets\ProvinsiChartWidget; 
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -12,7 +12,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             ProvinsiStatsWidget::class,
-            ProvinsiChartWidget::class, // Tambahkan jika ada
+            ProvinsiChartWidget::class, 
         ];
     }
 }

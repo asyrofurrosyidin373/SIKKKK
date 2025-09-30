@@ -5,12 +5,12 @@
 
 @section('content')
     <div class="container">
-        <!-- Header -->
+        <!-- Header Section -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mt-4">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="h2 text-success"><i class="fas fa-seedling me-2"></i>Varietas Kacang Tanah</h1>
+                        <h1 class="h3 mb-0 text-success">Varietas Kacang Tanah</h1>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     <div class="card-body">
                         <form method="GET" id="filterForm">
                             <!-- Filter Form -->
-                            <div class="container-fluid px-0">
+                            <div class="container px-0">
                                 <div class="row g-4">
                                     <!-- Kolom Kiri -->
                                     <div class="col-md-6">
@@ -226,13 +226,13 @@
 
                                 <!-- Tombol Cari -->
                                 <div class="row mt-4">
-                                    <div class="col-12 text-center">
-                                        <a href="{{ route('varietas.kacang-tanah') }}"
-                                            class="btn btn-outline-secondary px-5 py-2 w-10">
-                                            <i class="fas fa-undo me-2"></i>Reset
+                                    <div class="flex col-12 justify-content-end">
+                                        <a href="{{ route('varietas.kedelai') }}"
+                                            class="btn btn-outline-secondary px-5 py-2 me-2">
+                                            Reset
                                         </a>
-                                        <button type="submit" class="btn btn-success px-5 py-2 me-2 w-10">
-                                            <i class="fas fa-search me-2"></i>CARI
+                                        <button type="submit" class="btn btn-success px-5 py-2">
+                                            CARI
                                         </button>
                                     </div>
                                 </div>

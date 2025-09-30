@@ -17,6 +17,7 @@ class InsektisidaResource extends Resource
     protected static ?string $model = Insektisida::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
+    protected static ?string $navigationGroup = 'Diagnosis';
 
     protected static ?string $navigationLabel = 'Insektisida';
 

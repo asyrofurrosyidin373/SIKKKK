@@ -20,6 +20,9 @@ class KomKacangTanah extends Model
 
     protected $fillable = [
         'provitas',
+        'luas_tanam',
+        'produktivitas',
+        'total_produksi',
         'opt_id',
         'varietas_kacang_tanah_id',
         'pot_peningkatan_judgement',
@@ -28,6 +31,9 @@ class KomKacangTanah extends Model
 
     protected $casts = [
         'provitas' => 'decimal:2',
+        'luas_tanam' => 'decimal:2',
+        'produktivitas' => 'decimal:2',
+        'total_produksi' => 'decimal:2',
         'opt_id' => 'array',
         'varietas_kacang_tanah_id' => 'array',
         'pot_peningkatan_judgement' => 'integer',

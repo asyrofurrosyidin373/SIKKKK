@@ -8,6 +8,7 @@ use App\Models\VarietasKacangTanah;
 use App\Models\VarietasKacangHijau;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\DB;
 
 class VarietasController extends Controller
 {
@@ -17,6 +18,48 @@ class VarietasController extends Controller
             $cacheKey = 'varietas_overview';
             
             $data = Cache::remember($cacheKey, 3600, function() {
+                // Kumpulkan data top berdasarkan rata-rata (menggunakan kolom 'rata_hasil' yang tersedia)
+                $kedelai = VarietasKedelai::select('id', 'nama_varietas', 'rata_hasil')
+                    ->get()
+                    ->map(function ($v) {
+                        return [
+                            'id' => $v->id,
+                            'nama_varietas' => $v->nama_varietas,
+                            'rata2' => (float) ($v->rata_hasil ?? 0),
+                            'jenis' => 'kedelai',
+                        ];
+                    });
+
+                $kacangTanah = VarietasKacangTanah::select('id', 'nama_varietas', 'rata_hasil')
+                    ->get()
+                    ->map(function ($v) {
+                        return [
+                            'id' => $v->id,
+                            'nama_varietas' => $v->nama_varietas,
+                            'rata2' => (float) ($v->rata_hasil ?? 0),
+                            'jenis' => 'kacang-tanah',
+                        ];
+                    });
+
+                $kacangHijau = VarietasKacangHijau::select('id', 'nama_varietas', 'rata_hasil')
+                    ->get()
+                    ->map(function ($v) {
+                        return [
+                            'id' => $v->id,
+                            'nama_varietas' => $v->nama_varietas,
+                            'rata2' => (float) ($v->rata_hasil ?? 0),
+                            'jenis' => 'kacang-hijau',
+                        ];
+                    });
+
+                $topSales = collect()
+                    ->merge($kedelai)
+                    ->merge($kacangTanah)
+                    ->merge($kacangHijau)
+                    ->sortByDesc('rata2')
+                    ->values()
+                    ->take(10);
+
                 return [
                     'stats' => [
                         'kedelai' => [
@@ -42,7 +85,8 @@ class VarietasController extends Controller
                         'kedelai' => VarietasKedelai::orderBy('potensi_hasil', 'desc')->limit(3)->get(),
                         'kacang_tanah' => VarietasKacangTanah::orderBy('potensi_hasil', 'desc')->limit(3)->get(),
                         'kacang_hijau' => VarietasKacangHijau::orderBy('potensi_hasil', 'desc')->limit(3)->get()
-                    ]
+                    ],
+                    'top_sales' => $topSales,
                 ];
             });
             
@@ -51,7 +95,8 @@ class VarietasController extends Controller
             Log::error('Error in VarietasController@index: ' . $e->getMessage());
             return view('varietas.index', [
                 'stats' => [],
-                'top_varieties' => []
+                'top_varieties' => [],
+                'top_sales' => collect(),
             ]);
         }
     }

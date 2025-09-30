@@ -1,5 +1,5 @@
 <?php
-// app/Filament/Resources/GejalaResource.php
+// app/Filament\Resources\GejalaResource.php
 
 namespace App\Filament\Resources;
 
@@ -16,7 +16,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\RangeSlider;
+use Filament\Forms\Components\Grid;
 use Illuminate\Database\Eloquent\Builder;
 
 class GejalaResource extends Resource
@@ -26,6 +26,7 @@ class GejalaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $navigationLabel = 'Gejala';
+    protected static ?string $navigationGroup = 'Diagnosis';
 
     protected static ?int $navigationSort = 2;
 
@@ -120,7 +121,7 @@ class GejalaResource extends Resource
                     ->icons([
                         'heroicon-m-arrow-down' => 'Akar',
                         'heroicon-m-bars-3' => 'Batang',
-                        'heroicon-m-leaf' => 'Daun',
+                        'heroicon-m-bars-3' => 'Daun',
                     ]),
                 
                 Tables\Columns\TextColumn::make('gejala')
@@ -202,33 +203,63 @@ class GejalaResource extends Resource
                 
                 Filter::make('severity_range')
                     ->form([
-                        RangeSlider::make('severity_score')
-                            ->label('Rentang Keparahan')
-                            ->min(1)
-                            ->max(10)
-                            ->step(0.1)
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('severity_min')
+                                    ->label('Keparahan Minimum')
+                                    ->numeric()
+                                    ->placeholder('1')
+                                    ->minValue(1)
+                                    ->maxValue(10)
+                                    ->step(0.1),
+                                TextInput::make('severity_max')
+                                    ->label('Keparahan Maksimum')
+                                    ->numeric()
+                                    ->placeholder('10')
+                                    ->minValue(1)
+                                    ->maxValue(10)
+                                    ->step(0.1),
+                            ])
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['severity_score'],
-                                fn (Builder $query, $severity): Builder => $query->whereBetween('severity_score', $severity),
+                                $data['severity_min'],
+                                fn (Builder $query, $min): Builder => $query->where('severity_score', '>=', $min),
+                            )
+                            ->when(
+                                $data['severity_max'],
+                                fn (Builder $query, $max): Builder => $query->where('severity_score', '<=', $max),
                             );
                     }),
                 
                 Filter::make('frequency_range')
                     ->form([
-                        RangeSlider::make('frequency')
-                            ->label('Rentang Frekuensi')
-                            ->min(0)
-                            ->max(100)
-                            ->step(5)
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('frequency_min')
+                                    ->label('Frekuensi Minimum')
+                                    ->numeric()
+                                    ->placeholder('0')
+                                    ->minValue(0)
+                                    ->maxValue(100),
+                                TextInput::make('frequency_max')
+                                    ->label('Frekuensi Maksimum')
+                                    ->numeric()
+                                    ->placeholder('100')
+                                    ->minValue(0)
+                                    ->maxValue(100),
+                            ])
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['frequency'],
-                                fn (Builder $query, $frequency): Builder => $query->whereBetween('frequency', $frequency),
+                                $data['frequency_min'],
+                                fn (Builder $query, $min): Builder => $query->where('frequency', '>=', $min),
+                            )
+                            ->when(
+                                $data['frequency_max'],
+                                fn (Builder $query, $max): Builder => $query->where('frequency', '<=', $max),
                             );
                     }),
             ])

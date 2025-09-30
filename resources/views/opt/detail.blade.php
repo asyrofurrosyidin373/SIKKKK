@@ -10,20 +10,20 @@
             <div class="d-flex align-items-center mb-3">
                 <h1 class="h2 mb-0 me-3">{{ $opt->nama_opt }}</h1>
                 @if($opt->jenis == 'hama')
-                    <span class="badge bg-danger fs-6">Hama</span>
+                    <span class="badge bg-success fs-6">Hama</span>
                 @elseif($opt->jenis == 'penyakit')
-                    <span class="badge bg-warning fs-6">Penyakit</span>
+                    <span class="badge bg-success fs-6">Penyakit</span>
                 @else
-                    <span class="badge bg-info fs-6">{{ ucfirst($opt->jenis) }}</span>
+                    <span class="badge bg-success fs-6">{{ ucfirst($opt->jenis) }}</span>
                 @endif
             </div>
         </div>
         <div class="col-lg-4 text-end">
-            <button class="btn btn-outline-primary" onclick="window.print()">
+            <button class="btn btn-outline-success" onclick="window.print()">
                 <i class="fas fa-print me-2"></i>Cetak
             </button>
             <a href="{{ route('deteksi.index') }}" class="btn btn-success">
-                <i class="fas fa-search me-2"></i>Deteksi Sekarang
+                Deteksi Sekarang
             </a>
         </div>
     </div>
@@ -38,13 +38,13 @@
                          class="card-img-top" alt="{{ $opt->nama_opt }}"
                          style="height: 300px; object-fit: cover;">
                 @else
-                    <div class="bg-danger d-flex align-items-center justify-content-center text-white" style="height: 300px;">
+                    <div class="bg-success d-flex align-items-center justify-content-center text-white" style="height: 300px;">
                         <i class="fas fa-bug fa-4x"></i>
                     </div>
                 @endif
                 
                 <div class="card-body">
-                    <h6 class="text-danger mb-3">Klasifikasi</h6>
+                    <h6 class="text-success mb-3">Klasifikasi</h6>
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-muted">Jenis:</span>
                         <strong>{{ ucfirst($opt->jenis) }}</strong>
@@ -64,11 +64,11 @@
                     <div class="card-body">
                         @foreach($opt->gejala->groupBy('bagian_tanaman') as $bagian => $gejalaGroup)
                             <div class="mb-4">
-                                <h6 class="text-primary">{{ ucfirst($bagian) }}</h6>
+                                <h6 class="text-success">{{ ucfirst($bagian) }}</h6>
                                 <div class="row">
                                     @foreach($gejalaGroup as $gejala)
                                         <div class="col-md-6 mb-3">
-                                            <div class="border-start border-primary border-3 ps-3">
+                                            <div class="border-start border-success border-3 ps-3">
                                                 <p class="mb-0">{{ $gejala->deskripsi }}</p>
                                             </div>
                                         </div>
@@ -137,13 +137,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="d-flex align-items-center p-3 bg-light rounded">
                                         <div class="me-3">
-                                            @if($varietas->type == 'kedelai')
-                                                <i class="fas fa-seedling text-success fa-2x"></i>
-                                            @elseif($varietas->type == 'kacang-tanah')
-                                                <i class="fas fa-seedling text-warning fa-2x"></i>
-                                            @else
-                                                <i class="fas fa-seedling text-info fa-2x"></i>
-                                            @endif
+                                            <i class="fas fa-seedling text-success fa-2x"></i>
                                         </div>
                                         <div class="flex-grow-1">
                                             <h6 class="mb-1">{{ $varietas->nama_varietas }}</h6>
@@ -151,7 +145,7 @@
                                         </div>
                                         <div>
                                             <a href="{{ route('varietas.show', ['type' => $varietas->type, 'id' => $varietas->id]) }}" 
-                                               class="btn btn-sm btn-outline-primary">
+                                               class="btn btn-sm btn-outline-success">
                                                 Detail
                                             </a>
                                         </div>
