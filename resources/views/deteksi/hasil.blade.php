@@ -94,7 +94,7 @@
                             
                             <!-- Bagian Tanaman Terserang -->
                             <div class="mb-3">
-                                <h6 class="text-success">Bagian Tanaman:</h6>
+                                <h6 class="text-success">Bagian Tanaman :</h6>
                                 <div class="d-flex flex-wrap gap-1">
                                     @php
                                         $bagianTanaman = $result->matched_symptoms->pluck('daerah')->unique();
